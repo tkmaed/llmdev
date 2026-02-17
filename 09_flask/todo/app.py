@@ -33,7 +33,6 @@ def delete(todo_id):
     todos.pop(todo_id)
     with open("todos.txt", "w") as file:
         file.write("\n".join(todos))
-    # 課題で実装します。
     return redirect(url_for("index"))
 
 if __name__ == "__main__":
