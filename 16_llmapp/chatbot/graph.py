@@ -30,6 +30,8 @@ memory = MemorySaver()
 # グラフを保持する変数の初期化
 graph = None
 
+retriever = None
+
 # ===== Stateクラスの定義 =====
 # Stateクラス: メッセージのリストを保持する辞書型
 class State(TypedDict):
@@ -53,45 +55,49 @@ def create_index(persist_directory, embedding_model):
 
     # 新規にIndexを構築
     db = Chroma.from_documents(texts, embedding_model, persist_directory=persist_directory)
+
     return db
 
 def define_tools():
     # Web検索ツール
     tavily_tool = TavilySearchResults(max_results=2)
 
-    return [read_file, tavily_tool]
+    return [retrieve_company_rules, tavily_tool]
 
 @tool
-def read_file(words: str) -> str:
+def retrieve_company_rules(words: str) -> str:
     """
     Search and return company rules
     """
-    # 実行中のスクリプトのパスを取得
-    current_script_path = os.path.abspath(__file__)
-    # 実行中のスクリプトが存在するディレクトリを取得
-    current_directory = os.path.dirname(current_script_path)
+    global retriever
 
-    # インデックスの保存先
-    persist_directory = f'{current_directory}/chroma_db'
-    # エンベディングモデル
-    embedding_model = OpenAIEmbeddings(model="text-embedding-3-small")
+    if retriever == None:
+        # 実行中のスクリプトのパスを取得
+        current_script_path = os.path.abspath(__file__)
+        # 実行中のスクリプトが存在するディレクトリを取得
+        current_directory = os.path.dirname(current_script_path)
 
-    if os.path.exists(persist_directory):
-        try:
-            # ストレージから復元
-            db = Chroma(persist_directory=persist_directory, embedding_function=embedding_model)
-            print("既存のインデックスを復元しました。")
-        except Exception as e:
-            print(f"インデックスの復元に失敗しました: {e}")
+        # インデックスの保存先
+        persist_directory = f'{current_directory}/chroma_db'
+        # エンベディングモデル
+        embedding_model = OpenAIEmbeddings(model="text-embedding-3-small")
+
+        if os.path.exists(persist_directory):
+            try:
+                # ストレージから復元
+                db = Chroma(persist_directory=persist_directory, embedding_function=embedding_model)
+                print("既存のインデックスを復元しました。")
+            except Exception as e:
+                print(f"インデックスの復元に失敗しました: {e}")
+                db = create_index(persist_directory, embedding_model)
+        else:
+            print(f"インデックスを新規作成します。")
             db = create_index(persist_directory, embedding_model)
-    else:
-        print(f"インデックスを新規作成します。")
-        db = create_index(persist_directory, embedding_model)
 
-    # Retrieverの作成
-    retriever = db.as_retriever()
+        # Retrieverの作成
+        retriever = db.as_retriever()
 
-    retriever.invoke(words)
+    return retriever.invoke(words)
 
 # ===== グラフの構築 =====
 def build_graph(model_name, memory):
