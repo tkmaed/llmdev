@@ -16,6 +16,12 @@
     </div>
 </form>
 
+{% if messages %}
+<form method="POST" action="/auto-question">
+    <button type="submit" class="auto-question-button">自動質問</button>
+</form>
+{% endif %}
+
 <form method="POST" action="/clear">
     <button type="submit" class="clear-button">履歴を消去</button>
 </form>

@@ -29,7 +29,7 @@ body {
 }
 
 /* ユーザーとボットのメッセージのスタイル */
-.user-message, .bot-message {
+.user-message, .bot-message, .bot-questioner-message {
   position: relative;              /* 相対位置に設定 */
   padding: 10px;                   /* パディングを10pxに設定 */
   margin-bottom: 10px;             /* 下部に10pxのマージン */
@@ -45,10 +45,10 @@ body {
   margin-left: auto;               /* 自動的に左側のマージンを追加し右寄せ */
 }
 
-/* ボットのメッセージスタイル */
-.bot-message {
+.bot-questioner-message{
   background-color: #e2e3e5;       /* ボットのメッセージ背景色を薄い灰色に設定 */
-  text-align: left;                /* 左寄せに設定 */
+  text-align: right;               /* 右寄せに設定 */
+  margin-left: auto;               /* 自動的に左側のマージンを追加し右寄せ */
 }
 
 /* ボットのメッセージスタイル */
@@ -58,7 +58,7 @@ body {
 }
 
 /* 吹き出しの三角形を作成するスタイル */
-.user-message:after, .bot-message:after {
+.user-message:after, .bot-message:after, .bot-questioner-message{
   content: '';                     /* 空のコンテンツを挿入 */
   position: absolute;              /* 絶対位置で配置 */
   width: 0; height: 0;             /* サイズは0 */
@@ -73,6 +73,13 @@ body {
   top: 50%;                        /* 垂直中央に配置 */
   transform: translateY(-50%);     /* 中央揃え */
   border-top-color: #cce5ff;       /* ユーザーのメッセージの色と一致 */
+}
+
+.bot-questioner-message{
+  right: -10px;                    /* 吹き出しを右端に配置 */
+  top: 50%;                        /* 垂直中央に配置 */
+  transform: translateY(-50%);     /* 中央揃え */
+  border-top-color: #e2e3e5;       /* ユーザーのメッセージの色と一致 */
 }
 
 /* ボットのメッセージの吹き出し三角形 */

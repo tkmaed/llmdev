@@ -174,4 +174,6 @@ def get_messages_list(memory, thread_id):
         elif isinstance(message, AIMessage) and message.content != "":
             # ボットからのメッセージ（最終回答）
             messages.append({'class': 'bot-message', 'text': message.content.replace('\n', '<br>')})
+        else:
+            messages.append({'class': 'bot-questioner-message', 'text': message.content.replace('\n', '<br>')})
     return messages
